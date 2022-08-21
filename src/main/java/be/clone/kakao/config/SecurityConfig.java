@@ -2,6 +2,7 @@ package be.clone.kakao.config;
 
 import be.clone.kakao.jwt.JwtFilter;
 import be.clone.kakao.jwt.TokenProvider;
+import be.clone.kakao.jwt.exception.JwtExceptionFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,6 +36,8 @@ public class SecurityConfig {
                 .csrf().disable()
                 // jwt 필터 적용
                 .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
+                // jwt 익셉션 처리 필터 적용
+                .addFilterBefore(new JwtExceptionFilter(), JwtFilter.class)
                 // 세션 필요하다면 사용
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
