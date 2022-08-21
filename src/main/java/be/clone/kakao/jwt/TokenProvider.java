@@ -22,7 +22,7 @@ import java.util.Date;
 @Slf4j
 @Component
 public class TokenProvider {
-    private static final String BEARER_TYPE = "Bearer";
+    private static final String BEARER_TYPE = "Bearer ";
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;    // 30분
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7; // 7일
 
@@ -46,7 +46,7 @@ public class TokenProvider {
         long now = (new Date().getTime());
 
         // 액세스 토큰 생성
-        String accessToken = Jwts.builder()
+        String accessToken = BEARER_TYPE + Jwts.builder()
                 // 아이디, 닉네임, 만료시간 토큰에 담기
                 .setId(member.getMemberId().toString())
                 .setSubject(member.getNickname())
