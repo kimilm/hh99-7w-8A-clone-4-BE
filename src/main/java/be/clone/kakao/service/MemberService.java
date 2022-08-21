@@ -3,6 +3,7 @@ package be.clone.kakao.service;
 import be.clone.kakao.domain.jwttoken.dto.JwtTokenDto;
 import be.clone.kakao.domain.member.Member;
 import be.clone.kakao.domain.member.dto.LoginRequestDto;
+import be.clone.kakao.domain.member.dto.ProfileResponseDto;
 import be.clone.kakao.domain.member.dto.SignupRequestDto;
 import be.clone.kakao.jwt.TokenProvider;
 import be.clone.kakao.repository.MemberRepository;
@@ -46,5 +47,14 @@ public class MemberService {
         JwtTokenDto jwtTokenDto = tokenProvider.generateTokenDto(member);
 
         return jwtTokenDto;
+    }
+
+    // 프로필 조회
+    public ProfileResponseDto getProfile(Long memberId) {
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 회원입니다."));
+
+        return ProfileResponseDto.of(member);
     }
 }
