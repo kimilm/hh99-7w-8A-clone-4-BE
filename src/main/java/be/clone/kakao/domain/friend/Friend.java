@@ -3,11 +3,12 @@ package be.clone.kakao.domain.friend;
 import be.clone.kakao.domain.Timestamped;
 import be.clone.kakao.domain.member.Member;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.security.auth.callback.TextInputCallback;
 
+@Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Friend extends Timestamped {
@@ -16,11 +17,11 @@ public class Friend extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(name = "member_id")
+    @JoinColumn
     @ManyToOne(fetch = FetchType.LAZY)
     private Member from;
 
-    @JoinColumn(name = "member_id")
+    @JoinColumn
     @ManyToOne(fetch = FetchType.LAZY)
     private Member to;
 
