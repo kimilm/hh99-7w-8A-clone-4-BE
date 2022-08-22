@@ -1,11 +1,12 @@
 package be.clone.kakao.controller;
 
-import be.clone.kakao.domain.jwttoken.dto.JwtTokenDto;
+import be.clone.kakao.domain.SimpleMessageDto;
 import be.clone.kakao.domain.member.dto.LoginRequestDto;
 import be.clone.kakao.domain.member.dto.ProfileResponseDto;
 import be.clone.kakao.domain.member.dto.SignupRequestDto;
 import be.clone.kakao.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,10 +26,7 @@ public class MemberController {
         Long memberId = memberService.signup(requestDto);
 
         return ResponseEntity.ok()
-                .body(Map.of(
-                        "memberId", memberId,
-                        "msg", "회원가입 성공"
-                ));
+                .body(new SimpleMessageDto("회원가입 성공: memberId = " + memberId));
     }
 
     // 로그인
@@ -36,10 +34,11 @@ public class MemberController {
     public ResponseEntity<?> login(
             @RequestBody LoginRequestDto requestDto
     ) {
-        JwtTokenDto jwtTokenDto = memberService.login(requestDto);
+        HttpHeaders headers = memberService.login(requestDto);
 
         return ResponseEntity.ok()
-                .body(jwtTokenDto);
+                .headers(headers)
+                .body(new SimpleMessageDto("로그인 성공"));
     }
 
     // 내 정보 조회

@@ -9,8 +9,12 @@ import be.clone.kakao.jwt.TokenProvider;
 import be.clone.kakao.repository.MemberRepository;
 import be.clone.kakao.util.MemberUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import static be.clone.kakao.jwt.JwtFilter.AUTHORIZATION_HEADER;
+import static be.clone.kakao.jwt.JwtFilter.REFRESH_TOKEN_HEADER;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +39,7 @@ public class MemberService {
     }
 
     // 로그인
-    public JwtTokenDto login(LoginRequestDto requestDto) {
+    public HttpHeaders login(LoginRequestDto requestDto) {
         // 이메일 검증
         Member member = memberRepository.findByEmail(requestDto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 이메일입니다."));
@@ -45,8 +49,12 @@ public class MemberService {
         }
         // 토큰 생성
         JwtTokenDto jwtTokenDto = tokenProvider.generateTokenDto(member);
+        // 헤더에 담기
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(AUTHORIZATION_HEADER, jwtTokenDto.getAccessToken());
+        headers.add(REFRESH_TOKEN_HEADER, jwtTokenDto.getRefreshToken());
 
-        return jwtTokenDto;
+        return headers;
     }
 
     // 프로필 조회
