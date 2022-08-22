@@ -3,6 +3,7 @@ package be.clone.kakao.service;
 import be.clone.kakao.domain.friend.Friend;
 import be.clone.kakao.domain.friend.dto.FriendRequestDto;
 import be.clone.kakao.domain.friend.dto.FriendResponseDto;
+import be.clone.kakao.domain.friend.dto.FriendUpdateRequestDto;
 import be.clone.kakao.domain.member.Member;
 import be.clone.kakao.repository.FriendRepository;
 import be.clone.kakao.repository.MemberRepository;
@@ -50,4 +51,16 @@ public class FriendService {
                 .map(FriendResponseDto::of)
                 .collect(Collectors.toList());
     }
+
+    // 친구 이름 수정
+    public String updateFriendName(Long friendId, FriendUpdateRequestDto friendUpdateRequestDto, Member member) {
+
+        Friend friend = friendRepository.findByFromAndTo_MemberId(member, friendId)
+                .orElseThrow(() -> new IllegalArgumentException("친구로 등록되지 않은 사용자입니다."));
+
+        friend.updateName(friendUpdateRequestDto.getFriendName());
+
+        return friendRepository.save(friend).getFriendName();
+    }
 }
+

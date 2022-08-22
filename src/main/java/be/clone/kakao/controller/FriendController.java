@@ -3,16 +3,14 @@ package be.clone.kakao.controller;
 import be.clone.kakao.domain.SimpleMessageDto;
 import be.clone.kakao.domain.friend.dto.FriendRequestDto;
 import be.clone.kakao.domain.friend.dto.FriendResponseDto;
+import be.clone.kakao.domain.friend.dto.FriendUpdateRequestDto;
 import be.clone.kakao.domain.member.Member;
 import be.clone.kakao.jwt.userdetails.UserDetailsImpl;
 import be.clone.kakao.service.FriendService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -48,5 +46,20 @@ public class FriendController {
 
         return ResponseEntity.ok()
                 .body(friendResponseDtos);
+    }
+
+    // 친구 이름 수정
+    @PutMapping("/api/friends/{memberId}")
+    public ResponseEntity<?> updateFriendName(
+            @PathVariable Long memberId,
+            @RequestBody FriendUpdateRequestDto friendUpdateRequestDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        Member member = userDetails.getMember();
+
+        String name = friendService.updateFriendName(memberId, friendUpdateRequestDto, member);
+
+        return ResponseEntity.ok()
+                .body(new SimpleMessageDto("친구 이름 수정 완료"));
     }
 }

@@ -32,4 +32,8 @@ public class Friend extends Timestamped {
         this.from = from;
         this.to = to;
     }
+
+    public void updateName(String name) {
+        this.friendName = name;
+    }
 }
