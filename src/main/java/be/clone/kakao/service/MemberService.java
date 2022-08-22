@@ -8,11 +8,13 @@ import be.clone.kakao.domain.member.dto.ProfileResponseDto;
 import be.clone.kakao.domain.member.dto.SignupRequestDto;
 import be.clone.kakao.jwt.TokenProvider;
 import be.clone.kakao.repository.MemberRepository;
+import be.clone.kakao.repository.RefreshTokenRepository;
 import be.clone.kakao.util.MemberUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static be.clone.kakao.jwt.JwtFilter.AUTHORIZATION_HEADER;
 import static be.clone.kakao.jwt.JwtFilter.REFRESH_TOKEN_HEADER;
@@ -26,6 +28,8 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
 
     private final MemberRepository memberRepository;
+
+    private final RefreshTokenRepository refreshTokenRepository;
 
     // 회원가입
     public Long signup(SignupRequestDto requestDto) {
@@ -73,6 +77,15 @@ public class MemberService {
         member.updateMember(profileRequestDto);
         // 저장
         memberRepository.save(member);
+
+        return member.getMemberId();
+    }
+
+    // 로그아웃
+    @Transactional
+    public Long logout(Member member) {
+
+        refreshTokenRepository.deleteByMember(member);
 
         return member.getMemberId();
     }

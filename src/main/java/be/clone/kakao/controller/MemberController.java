@@ -14,8 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @RestController
 @RequiredArgsConstructor
 public class MemberController {
@@ -68,5 +66,18 @@ public class MemberController {
 
         return ResponseEntity.ok()
                 .body(new SimpleMessageDto("수정 성공: memberId = " + memberId));
+    }
+
+    // 로그아웃
+    @DeleteMapping("/api/logout")
+    public ResponseEntity<?> logout(
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        Member member = userDetails.getMember();
+
+        Long memberId = memberService.logout(member);
+
+        return ResponseEntity.ok()
+                .body(new SimpleMessageDto("로그아웃 성공: memberId = " + memberId));
     }
 }
