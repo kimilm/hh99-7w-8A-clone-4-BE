@@ -2,11 +2,16 @@ package be.clone.kakao.service;
 
 import be.clone.kakao.domain.friend.Friend;
 import be.clone.kakao.domain.friend.dto.FriendRequestDto;
+import be.clone.kakao.domain.friend.dto.FriendResponseDto;
 import be.clone.kakao.domain.member.Member;
 import be.clone.kakao.repository.FriendRepository;
 import be.clone.kakao.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,5 +38,17 @@ public class FriendService {
         Friend friend = new Friend(from, to, to.getNickname());
 
         return friendRepository.save(friend).getId();
+    }
+
+    // 친구 리스트 가져오기
+    @Transactional(readOnly = true)
+    public List<FriendResponseDto> getFriends(Member member) {
+
+        List<Friend> friends = friendRepository.findByFrom(member);
+
+        return friends.stream()
+                .map(Friend::getTo)
+                .map(FriendResponseDto::of)
+                .collect(Collectors.toList());
     }
 }
