@@ -3,14 +3,21 @@ package be.clone.kakao.service;
 import be.clone.kakao.domain.jwttoken.dto.JwtTokenDto;
 import be.clone.kakao.domain.member.Member;
 import be.clone.kakao.domain.member.dto.LoginRequestDto;
+import be.clone.kakao.domain.member.dto.ProfileRequestDto;
 import be.clone.kakao.domain.member.dto.ProfileResponseDto;
 import be.clone.kakao.domain.member.dto.SignupRequestDto;
 import be.clone.kakao.jwt.TokenProvider;
 import be.clone.kakao.repository.MemberRepository;
+import be.clone.kakao.repository.RefreshTokenRepository;
 import be.clone.kakao.util.MemberUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import static be.clone.kakao.jwt.JwtFilter.AUTHORIZATION_HEADER;
+import static be.clone.kakao.jwt.JwtFilter.REFRESH_TOKEN_HEADER;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +28,8 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
 
     private final MemberRepository memberRepository;
+
+    private final RefreshTokenRepository refreshTokenRepository;
 
     // 회원가입
     public Long signup(SignupRequestDto requestDto) {
@@ -35,7 +44,7 @@ public class MemberService {
     }
 
     // 로그인
-    public JwtTokenDto login(LoginRequestDto requestDto) {
+    public HttpHeaders login(LoginRequestDto requestDto) {
         // 이메일 검증
         Member member = memberRepository.findByEmail(requestDto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 이메일입니다."));
@@ -45,8 +54,12 @@ public class MemberService {
         }
         // 토큰 생성
         JwtTokenDto jwtTokenDto = tokenProvider.generateTokenDto(member);
+        // 헤더에 담기
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(AUTHORIZATION_HEADER, jwtTokenDto.getAccessToken());
+        headers.add(REFRESH_TOKEN_HEADER, jwtTokenDto.getRefreshToken());
 
-        return jwtTokenDto;
+        return headers;
     }
 
     // 프로필 조회
@@ -56,5 +69,24 @@ public class MemberService {
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 회원입니다."));
 
         return ProfileResponseDto.of(member);
+    }
+
+    // 프로필 수정
+    public Long updateProfile(Member member, ProfileRequestDto profileRequestDto) {
+        // 로그인한 회원 정보 업데이트
+        member.updateMember(profileRequestDto);
+        // 저장
+        memberRepository.save(member);
+
+        return member.getMemberId();
+    }
+
+    // 로그아웃
+    @Transactional
+    public Long logout(Member member) {
+
+        refreshTokenRepository.deleteByMember(member);
+
+        return member.getMemberId();
     }
 }

@@ -1,6 +1,7 @@
 package be.clone.kakao.domain.member;
 
 import be.clone.kakao.domain.Timestamped;
+import be.clone.kakao.domain.member.dto.ProfileRequestDto;
 import be.clone.kakao.domain.member.dto.SignupRequestDto;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -42,5 +43,11 @@ public class Member extends Timestamped {
 
     public static Member of(SignupRequestDto requestDto, String encodedPassword, String profilePic) {
         return new Member(requestDto.getEmail(), encodedPassword, requestDto.getNickname(), profilePic);
+    }
+
+    public void updateMember(ProfileRequestDto requestDto) {
+        this.nickname = requestDto.getNickname();
+        this.profilePic = requestDto.getProfilePic();
+        this.introduce = requestDto.getIntroduce();
     }
 }
