@@ -1,13 +1,17 @@
 package be.clone.kakao.controller;
 
 import be.clone.kakao.domain.SimpleMessageDto;
+import be.clone.kakao.domain.member.Member;
 import be.clone.kakao.domain.member.dto.LoginRequestDto;
+import be.clone.kakao.domain.member.dto.ProfileRequestDto;
 import be.clone.kakao.domain.member.dto.ProfileResponseDto;
 import be.clone.kakao.domain.member.dto.SignupRequestDto;
+import be.clone.kakao.jwt.userdetails.UserDetailsImpl;
 import be.clone.kakao.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -50,5 +54,19 @@ public class MemberController {
 
         return ResponseEntity.ok()
                 .body(responseDto);
+    }
+
+    // 내 프로필 수정
+    @PutMapping("/api/member")
+    public ResponseEntity<?> updateProfile(
+            @RequestBody ProfileRequestDto profileRequestDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        Member member = userDetails.getMember();
+
+        Long memberId = memberService.updateProfile(member, profileRequestDto);
+
+        return ResponseEntity.ok()
+                .body(new SimpleMessageDto("수정 성공: memberId = " + memberId));
     }
 }
