@@ -83,6 +83,11 @@ public class SecurityConfig {
                 .antMatchers("/h2-console/**").permitAll()
                 .antMatchers("/css/**").permitAll()
                 .antMatchers("/js/**").permitAll()
+                .antMatchers("/sub/**").permitAll()
+                .antMatchers("/pub/**").permitAll()
+                .antMatchers("/ws/**").permitAll()
+                .antMatchers("/stomp/**").permitAll()
+                .antMatchers("/websocket/**").permitAll()
                 // 이외에는 모두 인증 필요
                 .anyRequest().authenticated();
 
