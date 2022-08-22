@@ -62,5 +62,15 @@ public class FriendService {
 
         return friendRepository.save(friend).getFriendName();
     }
+
+    @Transactional
+    public void deleteFriend(Member member, Long toId) {
+
+        if (!friendRepository.existsByFromAndTo_MemberId(member, toId)) {
+            throw new IllegalArgumentException("친구로 등록되지 않은 사용자입니다.");
+        }
+
+        friendRepository.deleteByFromAndTo_MemberId(member, toId);
+    }
 }
 

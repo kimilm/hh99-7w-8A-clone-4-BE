@@ -62,4 +62,18 @@ public class FriendController {
         return ResponseEntity.ok()
                 .body(new SimpleMessageDto("친구 이름 수정 완료"));
     }
+
+    // 친구 삭제
+    @DeleteMapping("/api/friends/{memberId}")
+    public ResponseEntity<?> deleteFriend(
+            @PathVariable Long memberId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        Member member = userDetails.getMember();
+
+        friendService.deleteFriend(member, memberId);
+
+        return ResponseEntity.ok()
+                .body(new SimpleMessageDto("친구 삭제 완료"));
+    }
 }
