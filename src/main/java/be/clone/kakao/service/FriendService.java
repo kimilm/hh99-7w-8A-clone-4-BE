@@ -35,7 +35,7 @@ public class FriendService {
             throw new IllegalArgumentException("이미 친구로 추가된 사용자 입니다.");
         }
 
-        Friend friend = new Friend(from, to, to.getNickname());
+        Friend friend = new Friend(from, to);
 
         return friendRepository.save(friend).getId();
     }
@@ -47,7 +47,6 @@ public class FriendService {
         List<Friend> friends = friendRepository.findByFrom(member);
 
         return friends.stream()
-                .map(Friend::getTo)
                 .map(FriendResponseDto::of)
                 .collect(Collectors.toList());
     }

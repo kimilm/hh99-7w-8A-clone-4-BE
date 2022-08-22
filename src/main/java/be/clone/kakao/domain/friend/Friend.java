@@ -25,12 +25,11 @@ public class Friend extends Timestamped {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member to;
 
-    @Column(nullable = false)
+    @Column
     private String friendName;
 
-    public Friend(Member from, Member to, String friendName) {
+    public Friend(Member from, Member to) {
         this.from = from;
         this.to = to;
-        this.friendName = friendName;
     }
 }
