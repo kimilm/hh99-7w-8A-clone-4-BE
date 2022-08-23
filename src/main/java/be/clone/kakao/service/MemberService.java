@@ -2,10 +2,7 @@ package be.clone.kakao.service;
 
 import be.clone.kakao.domain.jwttoken.dto.JwtTokenDto;
 import be.clone.kakao.domain.member.Member;
-import be.clone.kakao.domain.member.dto.LoginRequestDto;
-import be.clone.kakao.domain.member.dto.ProfileRequestDto;
-import be.clone.kakao.domain.member.dto.ProfileResponseDto;
-import be.clone.kakao.domain.member.dto.SignupRequestDto;
+import be.clone.kakao.domain.member.dto.*;
 import be.clone.kakao.jwt.TokenProvider;
 import be.clone.kakao.repository.MemberRepository;
 import be.clone.kakao.repository.RefreshTokenRepository;
@@ -44,7 +41,7 @@ public class MemberService {
     }
 
     // 로그인
-    public HttpHeaders login(LoginRequestDto requestDto) {
+    public LoginResponseDto login(LoginRequestDto requestDto) {
         // 이메일 검증
         Member member = memberRepository.findByEmail(requestDto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 이메일입니다."));
@@ -59,7 +56,7 @@ public class MemberService {
         headers.add(AUTHORIZATION_HEADER, jwtTokenDto.getAccessToken());
         headers.add(REFRESH_TOKEN_HEADER, jwtTokenDto.getRefreshToken());
 
-        return headers;
+        return new LoginResponseDto(headers, ProfileResponseDto.of(member));
     }
 
     // 아이디로 프로필 조회
