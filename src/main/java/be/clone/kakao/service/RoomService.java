@@ -4,12 +4,10 @@ package be.clone.kakao.service;
 import be.clone.kakao.domain.Room.RoomDetail;
 import be.clone.kakao.domain.Room.RoomMaster;
 import be.clone.kakao.domain.Room.dto.RoomDetailRequestDto;
-import be.clone.kakao.domain.Room.dto.RoomDetailResponseDto;
 import be.clone.kakao.domain.Room.dto.RoomMasterRequestDto;
 import be.clone.kakao.domain.Room.dto.RoomMasterResponseDto;
 import be.clone.kakao.domain.SimpleMessageDto;
 import be.clone.kakao.domain.friend.Friend;
-import be.clone.kakao.domain.friend.dto.FriendResponseDto;
 import be.clone.kakao.domain.member.Member;
 import be.clone.kakao.repository.FriendRepository;
 import be.clone.kakao.repository.MemberRepository;
@@ -31,6 +29,8 @@ public class RoomService {
     private final RoomMasterRepository roomMasterRepository;
 
     private final FriendRepository friendRepository;
+
+    private final SimpleMessageDto simpleMessageDto;
 
     @Transactional
     public Long createRoom(Member member, RoomMasterRequestDto requestDto) {
@@ -101,14 +101,15 @@ public class RoomService {
     }
 
     @Transactional
-    public RoomDetailResponseDto inviteFriends(Member member, RoomDetailRequestDto requestDto) {
-        List<SimpleMessageDto> MessageDtos = new SimpleMessageDto("초대 성공");
-        List<Friend> friends = friendRepository.findByFrom(member);
-        Member to = friends.get(requestDto);
-        roomDetailRepository.save(to);
-        return SimpleMessageDto(friends);
+    public List<RoomDetailRequestDto> inviteFriends(Member member) {
+        List<Friend> allByOrderByModifiedAtDesc = friendRepository.findByFrom(member);
+        List<RoomDetailRequestDto> dtoList = new ArrayList<>();
+        for (Friend friend : allByOrderByModifiedAtDesc) {
+            Long friends = friend.getId();
+            RoomDetailRequestDto requestDto = new RoomDetailRequestDto(friends);
+            dtoList.add(requestDto);
+        }
+        return dtoList;
     }
 }
 
-//    @Transactional
-//    public

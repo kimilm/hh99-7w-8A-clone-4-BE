@@ -6,7 +6,8 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 //@AllArgsConstructor
 public class RoomDetailRequestDto {
-//private List<Friends> friends;
+private Long friend;
 }

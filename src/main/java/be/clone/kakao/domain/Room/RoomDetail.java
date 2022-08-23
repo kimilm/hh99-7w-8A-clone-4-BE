@@ -28,6 +28,6 @@ public class RoomDetail extends Timestamped {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-//    @ManyToOne( cascade = CascadeType.ALL)
-//    private Friends friends;
+    @ManyToOne( cascade = CascadeType.ALL)
+    private Friend friend;
 }

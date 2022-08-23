@@ -1,5 +1,6 @@
 package be.clone.kakao.controller;
 
+import be.clone.kakao.domain.Room.dto.RoomDetailRequestDto;
 import be.clone.kakao.domain.Room.dto.RoomMasterRequestDto;
 import be.clone.kakao.domain.Room.dto.RoomMasterResponseDto;
 import be.clone.kakao.domain.friend.Friend;
@@ -60,14 +61,12 @@ public class RoomController {
     }
 
 
-    @RequestMapping(value = "api/room/{roomMaserId}/mamber/{mamberId}", method = RequestMethod.POST)
-    public ResponseEntity<?> inviteFriends(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                           @RequestBody RoomMasterRequestDto requestDto) {
+    @RequestMapping(value = "api/room/{roomMaserId}", method = RequestMethod.POST)
+    public ResponseEntity<?> inviteFriends(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
-        roomService.inviteFriends(member, requestDto);
+        List<RoomDetailRequestDto> roomDetailRequestDtoList = roomService.inviteFriends(member);
         return ResponseEntity.ok()
-                .body();
-
+                .body(roomDetailRequestDtoList);
     }
 
 }
