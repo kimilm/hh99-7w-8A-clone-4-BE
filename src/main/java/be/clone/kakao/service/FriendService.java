@@ -5,6 +5,7 @@ import be.clone.kakao.domain.friend.dto.FriendRequestDto;
 import be.clone.kakao.domain.friend.dto.FriendResponseDto;
 import be.clone.kakao.domain.friend.dto.FriendUpdateRequestDto;
 import be.clone.kakao.domain.member.Member;
+import be.clone.kakao.domain.member.dto.ProfileResponseDto;
 import be.clone.kakao.repository.FriendRepository;
 import be.clone.kakao.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ public class FriendService {
     private final FriendRepository friendRepository;
 
     // 친구 추가
-    public Long addFriend(FriendRequestDto friendRequestDto, Member from) {
+    public ProfileResponseDto addFriend(FriendRequestDto friendRequestDto, Member from) {
 
         if (from.getEmail().equals(friendRequestDto.getEmail())) {
             throw new IllegalArgumentException("자기 자신은 친구로 추가할 수 없습니다.");
@@ -38,7 +39,9 @@ public class FriendService {
 
         Friend friend = new Friend(from, to);
 
-        return friendRepository.save(friend).getId();
+        friendRepository.save(friend);
+
+        return ProfileResponseDto.of(to);
     }
 
     // 친구 리스트 가져오기
