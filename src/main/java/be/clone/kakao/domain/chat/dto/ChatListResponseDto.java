@@ -3,14 +3,16 @@ package be.clone.kakao.domain.chat.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
-public class ChatListRequestDto {
+public class ChatListResponseDto {
     private Long roomMasterId;
     private String recentChat;
-    private String createdAt;
+    private LocalDateTime createdAt;
 
-    public ChatListRequestDto(Long roomId, ChatRequestDto requestDto){
+    public ChatListResponseDto(Long roomId, ChatDto requestDto) {
         this.roomMasterId = roomId;
         this.recentChat = requestDto.getContent();
         this.createdAt = requestDto.getCreatedAt();
