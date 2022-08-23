@@ -3,20 +3,12 @@ package be.clone.kakao.service;
 
 import be.clone.kakao.domain.Room.RoomDetail;
 import be.clone.kakao.domain.Room.RoomMaster;
-import be.clone.kakao.domain.Room.dto.RoomDetailRequestDto;
 import be.clone.kakao.domain.Room.dto.RoomInviteDto;
 import be.clone.kakao.domain.Room.dto.RoomMasterRequestDto;
 import be.clone.kakao.domain.Room.dto.RoomMasterResponseDto;
-import be.clone.kakao.domain.SimpleMessageDto;
-import be.clone.kakao.domain.friend.Friend;
 import be.clone.kakao.domain.member.Member;
-import be.clone.kakao.repository.FriendRepository;
-import be.clone.kakao.repository.MemberRepository;
 import be.clone.kakao.jwt.userdetails.UserDetailsImpl;
-import be.clone.kakao.repository.FriendRepository;
-import be.clone.kakao.repository.MemberRepository;
-import be.clone.kakao.repository.RoomDetailRepository;
-import be.clone.kakao.repository.RoomMasterRepository;
+import be.clone.kakao.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +23,7 @@ public class RoomService {
     private final MemberRepository memberRepository;
     private final RoomDetailRepository roomDetailRepository;
     private final RoomMasterRepository roomMasterRepository;
+    private final ChatRepository chatRepository;
 
 
     private final FriendRepository friendRepository;
@@ -72,6 +65,11 @@ public class RoomService {
             String roomName = roomDetail.getRoomMaster().getRoomName();
             Long people = roomDetailRepository.countByRoomMaster_Id(roomMasterId);
 
+            Long unReadCount = 0L;
+            if (roomDetail.getChatId() != null) {
+                unReadCount = chatRepository.countFromLastReadChat(roomMasterId, roomDetail.getChatId());
+            }
+
             RoomMasterResponseDto responseDto = new RoomMasterResponseDto(roomMasterId, roomName, recentChat, people);
             dtoList.add(responseDto);
         }
@@ -94,8 +92,8 @@ public class RoomService {
         RoomMaster roomMaster = roomMasterRepository.findById(roomMasterId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다."));
         Member me = userDetails.getMember();
-        for(Long id : requestDto.getFriends()){
-            if(friendRepository.existsByFromAndTo_MemberId(me,id)) {
+        for (Long id : requestDto.getFriends()) {
+            if (friendRepository.existsByFromAndTo_MemberId(me, id)) {
                 Member member = memberRepository.findById(id)
                         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
                 RoomDetail roomDetail = roomDetailRepository.findByRoomMaster_IdAndMember_MemberId(roomMasterId, id)
@@ -104,7 +102,6 @@ public class RoomService {
             }
         }
     }
-
 
 
 //    @Transactional
