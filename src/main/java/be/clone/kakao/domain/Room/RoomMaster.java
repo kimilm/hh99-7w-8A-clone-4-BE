@@ -1,16 +1,17 @@
 package be.clone.kakao.domain.Room;
 
 import be.clone.kakao.domain.Timestamped;
+import be.clone.kakao.domain.member.Member;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import java.lang.reflect.Member;
 
 @Builder
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Room extends Timestamped {
     @Id
     @Column(nullable = false)
@@ -20,13 +21,10 @@ public class Room extends Timestamped {
     private Member member;
 
     @Column(nullable = false)
-    private String room_name;
+    private String roomname;
 
     @Column(nullable = true)
     private int people;
-
-    @Column
-    private String msg;
 
 //    @JoinColumn(nullable = false, Cashca = )
 //    private chatlist chatlist;
