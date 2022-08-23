@@ -1,33 +1,30 @@
 package be.clone.kakao.domain.Room;
 
+import be.clone.kakao.domain.Room.dto.RoomDetailRequestDto;
+import be.clone.kakao.domain.Room.dto.RoomMasterRequestDto;
 import be.clone.kakao.domain.Timestamped;
-import be.clone.kakao.domain.member.Member;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
+import javax.persistence.*;
 
 @Builder
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class Room extends Timestamped {
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+public class RoomMaster extends Timestamped {
     @Id
-    @Column(nullable = false)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
-
     @Column(nullable = false)
-    private String roomname;
+    private String roomName;
 
-    @Column(nullable = true)
-    private int people;
-
-//    @JoinColumn(nullable = false, Cashca = )
-//    private chatlist chatlist;
-
+    public void update(RoomMasterRequestDto roomMasterRequestDto) {
+        this.roomName = roomMasterRequestDto.getRoomName();
+    }
 
 }

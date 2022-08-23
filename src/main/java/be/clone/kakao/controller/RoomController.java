@@ -1,42 +1,61 @@
 package be.clone.kakao.controller;
 
-import Controller.response.ResponseDto;
-import Service.RoomService;
-import org.apache.catalina.connector.Response;
+import be.clone.kakao.domain.Room.dto.RoomMasterRequestDto;
+import be.clone.kakao.domain.Room.dto.RoomMasterResponseDto;
+import be.clone.kakao.domain.member.Member;
+import be.clone.kakao.jwt.userdetails.UserDetailsImpl;
+
+import be.clone.kakao.service.RoomService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.lang.reflect.Member;
+import java.util.List;
+
 
 @Controller
 public class RoomController {
-    private  RoomService roomService;
+    private RoomService roomService;
 
-    @RequestMapping(value="/api/rooms", method = RequestMethod.POST)
-    public ResponseDto<?> createRoom(@AuthenticationPrincipal UserDetails userDetails) {
+    @RequestMapping(value = "/api/rooms", method = RequestMethod.POST)
+    public ResponseEntity<?> createRoom(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                        @RequestBody RoomMasterRequestDto requestDto) {
         Member member = userDetails.getMember();
-        return roomService.createRoom(memberId);
+        Long roomMasterId = roomService.createRoom(member, requestDto);
+        return ResponseEntity.ok()
+                .body(roomMasterId);
     }
+
 
     @RequestMapping(value = "/api/rooms", method = RequestMethod.GET)
-    public ResponseDto<?> getRoom(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<?> getRoom(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
-        return roomService.getRoom(memberId);
+        List<RoomMasterResponseDto> roomMasterResponseDtoList = roomService.getRoom(member);
+        return ResponseEntity.ok()
+                .body(roomMasterResponseDtoList);
     }
 
-    @RequestMapping(value = "/api/rooms/:room_master_id", method = RequestMethod.PUT)
-    public Response<?> putRoom(@AuthenticationPrincipal UserDetails userDetails) {
+    @RequestMapping(value = "/api/rooms/{roomMasterId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> putRoom(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                     @RequestBody RoomMasterRequestDto requestDto, @PathVariable Long roomMasterId) {
         Member member = userDetails.getMember();
-        return roomService.putRoom(MemberId);
+        roomService.putRoom(member, requestDto, roomMasterId);
+        return ResponseEntity.ok()
+                .body(roomMasterId);
     }
 
-    @RequestMapping(value = "api/rooms/:room_master_id/member/:member_id", method = RequestMethod.DELETE)
-    public  Response<?> deleteRoom(@AuthenticationPrincipal UserDetails userDetails) {
-        Member member = userDetails.getMember();
-        return  roomService.deleteRoom(memberId);
+//    @RequestMapping(value = "api/room/{roomMaserId}/mamber/{mamberId}", method = RequestMethod.POST)
+//    public ResponseEntity<?> postFriends(@AuthenticationPrincipal UserDetailsImpl userDetails,
+//                                         @PathVariable Long mamberId, @RequestBody RoomMasterRequestDto requestDto) {
+//        Member member = userDetails.getMember();
+//        roomService.postFriends(mamberId, member, requestDto);
+//        return ResponseEntity.ok()
+//                .body();
+//
+//    }
 
-    }
 }
