@@ -3,9 +3,15 @@ package be.clone.kakao.service;
 
 import be.clone.kakao.domain.Room.RoomDetail;
 import be.clone.kakao.domain.Room.RoomMaster;
+import be.clone.kakao.domain.Room.dto.RoomDetailRequestDto;
+import be.clone.kakao.domain.Room.dto.RoomDetailResponseDto;
 import be.clone.kakao.domain.Room.dto.RoomMasterRequestDto;
 import be.clone.kakao.domain.Room.dto.RoomMasterResponseDto;
+import be.clone.kakao.domain.SimpleMessageDto;
+import be.clone.kakao.domain.friend.Friend;
+import be.clone.kakao.domain.friend.dto.FriendResponseDto;
 import be.clone.kakao.domain.member.Member;
+import be.clone.kakao.repository.FriendRepository;
 import be.clone.kakao.repository.MemberRepository;
 import be.clone.kakao.repository.RoomDetailRepository;
 import be.clone.kakao.repository.RoomMasterRepository;
@@ -23,6 +29,8 @@ public class RoomService {
     private final MemberRepository memberRepository;
     private final RoomDetailRepository roomDetailRepository;
     private final RoomMasterRepository roomMasterRepository;
+
+    private final FriendRepository friendRepository;
 
     @Transactional
     public Long createRoom(Member member, RoomMasterRequestDto requestDto) {
@@ -77,6 +85,28 @@ public class RoomService {
         }
         roomMaster.update(requestDto);
         return roomMaster;
+    }
+
+
+    @Transactional
+    public RoomMaster deleteRoom(Member member, Long roomMasterId) {
+        RoomMaster roomMaster = roomMasterRepository.findById(roomMasterId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다."));
+        if (roomDetailRepository.existsByMemberAndRoomMaster(member, roomMaster)) {
+            throw new IllegalArgumentException("작성자만 지울 수 있습니다.");
+        }
+        roomMasterRepository.deleteByRoomMaster(roomMasterId);
+        roomMasterRepository.delete(roomMaster);
+        return roomMaster;
+    }
+
+    @Transactional
+    public RoomDetailResponseDto inviteFriends(Member member, RoomDetailRequestDto requestDto) {
+        List<SimpleMessageDto> MessageDtos = new SimpleMessageDto("초대 성공");
+        List<Friend> friends = friendRepository.findByFrom(member);
+        Member to = friends.get(requestDto);
+        roomDetailRepository.save(to);
+        return SimpleMessageDto(friends);
     }
 }
 
