@@ -43,12 +43,23 @@ public class MemberController {
                 .body(new SimpleMessageDto("로그인 성공"));
     }
 
-    // 내 정보 조회
+    // 아이디로 정보 조회
     @GetMapping("/api/member/{memberId}")
     public ResponseEntity<?> getProfile(
             @PathVariable Long memberId
     ) {
         ProfileResponseDto responseDto = memberService.getProfile(memberId);
+
+        return ResponseEntity.ok()
+                .body(responseDto);
+    }
+
+    // 이메일로 정보 조회
+    @GetMapping("/api/member")
+    public ResponseEntity<?> getProfile(
+            @RequestParam("email") String email
+    ) {
+        ProfileResponseDto responseDto = memberService.getProfile(email);
 
         return ResponseEntity.ok()
                 .body(responseDto);

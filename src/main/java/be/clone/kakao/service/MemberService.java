@@ -62,10 +62,19 @@ public class MemberService {
         return headers;
     }
 
-    // 프로필 조회
+    // 아이디로 프로필 조회
     public ProfileResponseDto getProfile(Long memberId) {
 
         Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 회원입니다."));
+
+        return ProfileResponseDto.of(member);
+    }
+
+    // 이메일로 프로필 조회
+    public ProfileResponseDto getProfile(String email) {
+
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 회원입니다."));
 
         return ProfileResponseDto.of(member);
