@@ -58,11 +58,15 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+
+        httpSecurity.headers().frameOptions().disable(); // 이거 하니까 h2됨.
         httpSecurity
                 // cors 적용
                 .cors().configurationSource(corsConfigurationSource())
                 .and()
-                .csrf().disable()
+                .csrf()
+                .ignoringAntMatchers("/h2-console/**", "/favicon.ico")
+                .disable()
                 // jwt 필터 적용
                 .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
                 // jwt 익셉션 처리 필터 적용
@@ -76,6 +80,14 @@ public class SecurityConfig {
                 // 로그인, 회원가입 허용
                 .antMatchers(HttpMethod.POST, "/api/login").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/signup").permitAll()
+                .antMatchers("/h2-console/**").permitAll()
+                .antMatchers("/css/**").permitAll()
+                .antMatchers("/js/**").permitAll()
+                .antMatchers("/sub/**").permitAll()
+                .antMatchers("/pub/**").permitAll()
+                .antMatchers("/ws/**").permitAll()
+                .antMatchers("/stomp/**").permitAll()
+                .antMatchers("/websocket/**").permitAll()
                 // 이외에는 모두 인증 필요
                 .anyRequest().authenticated();
 
