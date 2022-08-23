@@ -2,14 +2,10 @@ package be.clone.kakao.controller;
 
 import be.clone.kakao.domain.SimpleMessageDto;
 import be.clone.kakao.domain.member.Member;
-import be.clone.kakao.domain.member.dto.LoginRequestDto;
-import be.clone.kakao.domain.member.dto.ProfileRequestDto;
-import be.clone.kakao.domain.member.dto.ProfileResponseDto;
-import be.clone.kakao.domain.member.dto.SignupRequestDto;
+import be.clone.kakao.domain.member.dto.*;
 import be.clone.kakao.jwt.userdetails.UserDetailsImpl;
 import be.clone.kakao.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -36,19 +32,30 @@ public class MemberController {
     public ResponseEntity<?> login(
             @RequestBody LoginRequestDto requestDto
     ) {
-        HttpHeaders headers = memberService.login(requestDto);
+        LoginResponseDto loginResponseDto = memberService.login(requestDto);
 
         return ResponseEntity.ok()
-                .headers(headers)
-                .body(new SimpleMessageDto("로그인 성공"));
+                .headers(loginResponseDto.getHeaders())
+                .body(loginResponseDto.getProfileResponseDto());
     }
 
-    // 내 정보 조회
+    // 아이디로 정보 조회
     @GetMapping("/api/member/{memberId}")
     public ResponseEntity<?> getProfile(
             @PathVariable Long memberId
     ) {
         ProfileResponseDto responseDto = memberService.getProfile(memberId);
+
+        return ResponseEntity.ok()
+                .body(responseDto);
+    }
+
+    // 이메일로 정보 조회
+    @GetMapping("/api/member")
+    public ResponseEntity<?> getProfile(
+            @RequestParam("email") String email
+    ) {
+        ProfileResponseDto responseDto = memberService.getProfile(email);
 
         return ResponseEntity.ok()
                 .body(responseDto);
@@ -71,7 +78,7 @@ public class MemberController {
     // 로그아웃
     @DeleteMapping("/api/logout")
     public ResponseEntity<?> logout(
-        @AuthenticationPrincipal UserDetailsImpl userDetails
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         Member member = userDetails.getMember();
 

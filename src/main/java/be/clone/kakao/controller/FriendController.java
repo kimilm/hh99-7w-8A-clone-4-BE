@@ -5,6 +5,7 @@ import be.clone.kakao.domain.friend.dto.FriendRequestDto;
 import be.clone.kakao.domain.friend.dto.FriendResponseDto;
 import be.clone.kakao.domain.friend.dto.FriendUpdateRequestDto;
 import be.clone.kakao.domain.member.Member;
+import be.clone.kakao.domain.member.dto.ProfileResponseDto;
 import be.clone.kakao.jwt.userdetails.UserDetailsImpl;
 import be.clone.kakao.service.FriendService;
 import lombok.RequiredArgsConstructor;
@@ -28,10 +29,10 @@ public class FriendController {
     ) {
         Member member = userDetails.getMember();
 
-        friendService.addFriend(friendRequestDto, member);
+        ProfileResponseDto responseDto = friendService.addFriend(friendRequestDto, member);
 
         return ResponseEntity.ok()
-                .body(new SimpleMessageDto("친구 추가 완료"));
+                .body(responseDto);
     }
 
     // 내 친구 리스트
