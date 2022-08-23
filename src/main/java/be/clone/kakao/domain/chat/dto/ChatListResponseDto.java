@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class ChatListResponseDto {
     private Long roomMasterId;
     private String recentChat;
-    private LocalDateTime createdAt;
+    private String createdAt;
 
     public ChatListResponseDto(Long roomId, ChatDto requestDto) {
         this.roomMasterId = roomId;

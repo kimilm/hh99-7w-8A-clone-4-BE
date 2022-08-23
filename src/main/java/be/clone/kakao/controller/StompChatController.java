@@ -27,7 +27,7 @@ public class StompChatController {
     @MessageMapping(value = "/chat/room/{roomId}")
     public void message(@DestinationVariable String roomId, ChatDto message) {
         //채팅 저장
-        chatService.saveChat(Long.parseLong(roomId), message);
+        message = chatService.saveChat(Long.parseLong(roomId), message);
         log.info("pub success " + message.getContent());
         //채팅방에 정보 전달
         template.convertAndSend("/sub/chat/room/" + roomId, message);

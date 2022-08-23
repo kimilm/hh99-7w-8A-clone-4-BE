@@ -23,7 +23,7 @@ public class ChatService {
 
 
     @Transactional
-    public void saveChat(Long roomId, ChatDto message) {
+    public ChatDto saveChat(Long roomId, ChatDto message) {
         RoomDetail roomDetail = roomDetailRepository.findByRoomMaster_IdAndMember_MemberId(roomId, message.getMemberId())
                 .orElseThrow(() -> new NullPointerException("해당하는 룸 세부정보가 없습니다."));
 
@@ -35,7 +35,9 @@ public class ChatService {
                 .message(message.getContent())
                 .isImg(false)
                 .build();
-        chatRepository.save(chat);
+
+        ChatDto chatDto = new ChatDto(chatRepository.save(chat));
+        return chatDto;
     }
 
     @Transactional(readOnly = true)

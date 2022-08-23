@@ -18,7 +18,7 @@ public class ChatDto {
     private String nickname;
     private String profilePic;
     private String content;
-    private LocalDateTime createdAt;
+    private String createdAt;
 
     public ChatDto(Chat chat) {
         Member member = chat.getRoomDetail().getMember();
@@ -26,7 +26,7 @@ public class ChatDto {
         this.nickname = member.getNickname();
         this.profilePic = member.getProfilePic();
         this.content = chat.getMessage();
-        this.createdAt = chat.getCreatedAt();
+        this.createdAt = chat.getCreatedAt().toString();
     }
 
 }
