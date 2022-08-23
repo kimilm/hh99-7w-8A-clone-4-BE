@@ -1,6 +1,7 @@
 package be.clone.kakao.domain.chat;
 
-import be.clone.kakao.domain.roomdetail.RoomDetail;
+
+import be.clone.kakao.domain.Room.RoomDetail;
 import be.clone.kakao.domain.Timestamped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
