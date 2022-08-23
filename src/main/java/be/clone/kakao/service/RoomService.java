@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 @Service
 @RequiredArgsConstructor
 public class RoomService {
@@ -27,6 +26,7 @@ public class RoomService {
     public Long createRoom(Member member, RoomMasterRequestDto requestDto) {
         RoomMaster roomMaster = RoomMaster.builder()
                 .roomName(requestDto.getRoomName())
+                .roomDetails(new ArrayList<>())
                 .build();
 
         RoomDetail roomDetail = RoomDetail.builder()
@@ -34,7 +34,9 @@ public class RoomService {
                 .roomMaster(roomMaster)
                 .build();
 
-        roomDetailRepository.save(roomDetail);
+        roomMaster.getRoomDetails().add(roomDetail);
+
+        roomMasterRepository.save(roomMaster);
 
         return roomMaster.getId();
     }

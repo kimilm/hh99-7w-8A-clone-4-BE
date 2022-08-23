@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @Entity
@@ -22,6 +24,9 @@ public class RoomMaster extends Timestamped {
 
     @Column(nullable = false)
     private String roomName;
+
+    @OneToMany(mappedBy = "roomMaster", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RoomDetail> roomDetails = new ArrayList<>();
 
     public void update(RoomMasterRequestDto roomMasterRequestDto) {
         this.roomName = roomMasterRequestDto.getRoomName();
