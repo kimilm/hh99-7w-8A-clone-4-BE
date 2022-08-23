@@ -1,8 +1,13 @@
 package be.clone.kakao.service;
 
+import be.clone.kakao.domain.chat.Chat;
+import be.clone.kakao.domain.chat.dto.ChatRequestDto;
+import be.clone.kakao.domain.member.Member;
 import be.clone.kakao.domain.roomdetail.RoomDetail;
 import be.clone.kakao.domain.roommaster.RoomMaster;
 import be.clone.kakao.domain.roommaster.dto.RoomRequestDto;
+import be.clone.kakao.repository.ChatRepository;
+import be.clone.kakao.repository.RoomDetailRepository;
 import be.clone.kakao.repository.RoomMasterRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +28,10 @@ public class ChatService {
     private Map<Long, RoomMaster> chatRooms;
 
     private final RoomMasterRepository roomMasterRepository;
+
+    private final RoomDetailRepository roomDetailRepository;
+
+    private final ChatRepository chatRepository;
 
     @PostConstruct
     private void init() {
@@ -52,5 +61,16 @@ public class ChatService {
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
+    }
+
+    public void saveChat(Long roomId, ChatRequestDto message) {
+        RoomDetail roomDetail = roomDetailRepository.findByMaster_RoomMasterIdAndMember_MemberId(roomId, message.getMemberId())
+                .orElseThrow(() -> new NullPointerException("해당하는 룸 세부정보가 없습니다."));
+        Chat chat = Chat.builder()
+                .roomDetail(roomDetail)
+                .message(message.getContent())
+                .isImg(false)
+                .build();
+        chatRepository.save(chat);
     }
 }
