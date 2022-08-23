@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class RoomMasterResponseDto {
     private Long roomMasterId;
-   private String roomName;
-   private Long people;
+    private String roomName;
+    private String recentChat;
+    private Long people;
 }

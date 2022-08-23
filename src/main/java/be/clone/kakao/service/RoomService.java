@@ -6,6 +6,7 @@ import be.clone.kakao.domain.Room.RoomMaster;
 import be.clone.kakao.domain.Room.dto.RoomMasterRequestDto;
 import be.clone.kakao.domain.Room.dto.RoomMasterResponseDto;
 import be.clone.kakao.domain.member.Member;
+import be.clone.kakao.repository.MemberRepository;
 import be.clone.kakao.repository.RoomDetailRepository;
 import be.clone.kakao.repository.RoomMasterRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class RoomService {
+    private final MemberRepository memberRepository;
     private final RoomDetailRepository roomDetailRepository;
     private final RoomMasterRepository roomMasterRepository;
 
@@ -41,6 +43,11 @@ public class RoomService {
         return roomMaster.getId();
     }
 
+    @Transactional(readOnly = true)
+    public List<RoomMasterResponseDto> getRoom(String memberId) {
+        Member member = memberRepository.findById(Long.parseLong(memberId)).orElseThrow();
+        return getRoom(member);
+    }
 
     @Transactional(readOnly = true)
     public List<RoomMasterResponseDto> getRoom(Member member) {
@@ -50,10 +57,11 @@ public class RoomService {
         for (RoomDetail roomDetail : allByOrderByModifiedAtDesc) {
 
             Long roomMasterId = roomDetail.getRoomMaster().getId();
+            String recentChat = roomDetail.getRoomMaster().getRecentChat();
             String roomName = roomDetail.getRoomMaster().getRoomName();
             Long people = roomDetailRepository.countByRoomMaster_Id(roomMasterId);
 
-            RoomMasterResponseDto responseDto = new RoomMasterResponseDto(roomMasterId, roomName, people);
+            RoomMasterResponseDto responseDto = new RoomMasterResponseDto(roomMasterId, roomName, recentChat, people);
             dtoList.add(responseDto);
         }
         return dtoList;
