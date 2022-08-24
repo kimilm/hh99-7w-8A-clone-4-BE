@@ -27,6 +27,9 @@ public class RoomMaster extends Timestamped {
     @Column
     private String recentChat;
 
+    @Column(nullable = false)
+    private String roomPic;
+
     @OneToMany(mappedBy = "roomMaster", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RoomDetail> roomDetails = new ArrayList<>();
 

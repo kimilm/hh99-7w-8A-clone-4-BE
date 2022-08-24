@@ -9,6 +9,7 @@ import be.clone.kakao.domain.Room.dto.RoomMasterResponseDto;
 import be.clone.kakao.domain.chat.Chat;
 import be.clone.kakao.domain.member.Member;
 import be.clone.kakao.repository.*;
+import be.clone.kakao.util.KakaoUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +41,7 @@ public class RoomService {
         RoomMaster roomMaster = RoomMaster.builder()
                 .roomName(requestDto.getRoomName())
                 .roomDetails(new ArrayList<>())
+                .roomPic(KakaoUtils.getRandomRoomPic())
                 .build();
 
         RoomDetail roomDetail = RoomDetail.builder()
@@ -51,7 +53,7 @@ public class RoomService {
 
         roomMasterRepository.save(roomMaster);
 
-        RoomMasterResponseDto responseDto = new RoomMasterResponseDto(roomMaster.getId(), roomMaster.getRoomName(), null, 0L, 0L);
+        RoomMasterResponseDto responseDto = new RoomMasterResponseDto(roomMaster.getId(), roomMaster.getRoomName(), roomMaster.getRoomPic(), null, 0L, 0L);
 
         return responseDto;
     }
@@ -72,6 +74,7 @@ public class RoomService {
             Long roomMasterId = roomDetail.getRoomMaster().getId();
             String recentChat = roomDetail.getRoomMaster().getRecentChat();
             String roomName = roomDetail.getRoomMaster().getRoomName();
+            String roomPic = roomDetail.getRoomMaster().getRoomPic();
             Long people = roomDetailRepository.countByRoomMaster_Id(roomMasterId);
 
             Long unReadCount = 0L;
@@ -79,7 +82,7 @@ public class RoomService {
                 unReadCount = chatRepository.countFromLastReadChat(roomMasterId, roomDetail.getChatId());
             }
 
-            RoomMasterResponseDto responseDto = new RoomMasterResponseDto(roomMasterId, roomName, recentChat, unReadCount, people);
+            RoomMasterResponseDto responseDto = new RoomMasterResponseDto(roomMasterId, roomName, roomPic, recentChat, unReadCount, people);
             dtoList.add(responseDto);
         }
         return dtoList;

@@ -6,7 +6,7 @@ import be.clone.kakao.domain.member.dto.*;
 import be.clone.kakao.jwt.TokenProvider;
 import be.clone.kakao.repository.MemberRepository;
 import be.clone.kakao.repository.RefreshTokenRepository;
-import be.clone.kakao.util.MemberUtils;
+import be.clone.kakao.util.KakaoUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -52,7 +52,7 @@ public class MemberService {
         // 패스워드 인코딩
         String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
         // 기본 이미지
-        String defaultProfilePic = MemberUtils.getPic();
+        String defaultProfilePic = KakaoUtils.getRandomMemberPic();
         // 맴버 객체 생성
         Member member = Member.of(requestDto, encodedPassword, defaultProfilePic);
         // 저장 후 아이디 리턴
@@ -65,7 +65,7 @@ public class MemberService {
         Member member = memberRepository.findByEmail(requestDto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 이메일입니다."));
 
-        if(member.getKakaoId() == null) throw new IllegalArgumentException("카카오로 가입된 유저입니다.");
+        if (member.getKakaoId() == null) throw new IllegalArgumentException("카카오로 가입된 유저입니다.");
         // 비밀번호 검증
         if (!passwordEncoder.matches(requestDto.getPassword(), member.getPassword())) {
             throw new IllegalArgumentException("비밀번호를 잘못 입력하셨습니다.");
@@ -135,7 +135,7 @@ public class MemberService {
         Long kakaoId = kakaoUserInfo.getId();
         Member kakaoUser = memberRepository.findByKakaoId(kakaoId)
                 .orElse(null);
-        if(kakaoUser == null){
+        if (kakaoUser == null) {
             // 회원가입
             Member member = new Member(
                     kakaoUserInfo.getEmail(),
@@ -207,6 +207,6 @@ public class MemberService {
                 .get("profile_image").asText();
         String email = jsonNode.get("kakao_account")
                 .get("email").asText();
-        return new KakaoUserInfoDto(id,nickname,image,email);
+        return new KakaoUserInfoDto(id, nickname, image, email);
     }
 }

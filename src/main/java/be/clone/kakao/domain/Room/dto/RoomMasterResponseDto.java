@@ -10,6 +10,7 @@ import lombok.*;
 public class RoomMasterResponseDto {
     private Long roomMasterId;
     private String roomName;
+    private String roomPic;
     private String recentChat;
     private Long unReadCount;
     private Long people;
