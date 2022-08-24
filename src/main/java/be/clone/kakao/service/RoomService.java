@@ -99,7 +99,7 @@ public class RoomService {
 //    }
 
     @Transactional
-    public List<RoomDetailRequestDto> inviteFriends(Member member) {
+    public List<RoomDetailRequestDto> inviteFriends(Member member, RoomMaster roomMasterId) {
         List<Friend> allByOrderByModifiedAtDesc = friendRepository.findByFrom(member);
         List<RoomDetailRequestDto> dtoList = new ArrayList<>();
         for (Friend friend : allByOrderByModifiedAtDesc) {
