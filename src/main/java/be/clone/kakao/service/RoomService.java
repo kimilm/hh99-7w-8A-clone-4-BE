@@ -6,6 +6,7 @@ import be.clone.kakao.domain.Room.RoomMaster;
 import be.clone.kakao.domain.Room.dto.RoomInviteDto;
 import be.clone.kakao.domain.Room.dto.RoomMasterRequestDto;
 import be.clone.kakao.domain.Room.dto.RoomMasterResponseDto;
+import be.clone.kakao.domain.chat.Chat;
 import be.clone.kakao.domain.member.Member;
 import be.clone.kakao.jwt.userdetails.UserDetailsImpl;
 import be.clone.kakao.repository.*;
@@ -88,6 +89,17 @@ public class RoomService {
         return roomMaster;
     }
 
+    @Transactional
+    public void updateLastReadChat(Long roomId, Long memberId) {
+        RoomDetail detail = roomDetailRepository.findByRoomMaster_IdAndMember_MemberId(roomId, memberId)
+                .orElseThrow(() -> new IllegalArgumentException("채팅방에 속해있지 않은 회원입니다."));
+
+        Chat chat = chatRepository.findFirstByRoomDetail_RoomMaster_IdOrderByCreatedAtDesc(roomId)
+                .orElseThrow(() -> new IllegalArgumentException("채팅 내역이 존재하지 않습니다."));
+
+        detail.updateChatId(chat.getChatId());
+    }
+
     public void Invite(UserDetailsImpl userDetails, Long roomMasterId, RoomInviteDto requestDto) {
         RoomMaster roomMaster = roomMasterRepository.findById(roomMasterId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다."));
@@ -102,6 +114,7 @@ public class RoomService {
             }
         }
     }
+}
 
 
 //    @Transactional
@@ -127,5 +140,4 @@ public class RoomService {
 //        }
 //        return dtoList;
 //    }
-}
 

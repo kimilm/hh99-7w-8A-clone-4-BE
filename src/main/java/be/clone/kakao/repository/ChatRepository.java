@@ -1,11 +1,14 @@
 package be.clone.kakao.repository;
 
+import be.clone.kakao.domain.Room.RoomDetail;
+import be.clone.kakao.domain.Room.RoomMaster;
 import be.clone.kakao.domain.chat.Chat;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ChatRepository extends JpaRepository<Chat, Long> {
     String COUNT_QUERY_STRING = "SELECT COUNT(*) FROM chat c " +
@@ -19,4 +22,7 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
     Long countFromLastReadChat(@Param(value = "roomMasterId") Long roomMasterId, @Param(value = "chatId") Long chatId);
 
     List<Chat> findByRoomDetail_RoomMaster_IdOrderByCreatedAtAsc(Long masterId);
+
+    Optional<Chat> findFirstByRoomDetail_RoomMaster_IdOrderByCreatedAtDesc(Long roomMasterId);
+
 }

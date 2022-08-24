@@ -30,6 +30,10 @@ public class RoomDetail extends Timestamped {
     @Column
     private Long chatId;
 
+    public void updateChatId(Long chatId) {
+        this.chatId = chatId;
+    }
+
     public RoomDetail(RoomMaster roomMaster, Member member) {
         this.roomMaster = roomMaster;
         this.member = member;

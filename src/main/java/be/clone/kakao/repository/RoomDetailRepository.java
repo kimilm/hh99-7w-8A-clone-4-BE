@@ -10,13 +10,19 @@ import java.util.List;
 import java.util.Optional;
 
 
-public interface RoomDetailRepository extends JpaRepository<RoomDetail,Long> {
+public interface RoomDetailRepository extends JpaRepository<RoomDetail, Long> {
 
     List<RoomDetail> findAllByRoomMaster(RoomMaster master);
 
     Optional<RoomDetail> findByRoomMaster_IdAndMember_MemberId(Long masterId, Long memberId);
+
     Optional<RoomDetail> findByMember(Member member);
+
     boolean existsByMemberAndRoomMaster(Member member, RoomMaster roomMaster);
+
     Long countByRoomMaster_Id(Long roomMasterId);
+
     List<RoomDetail> findAllByMemberOrderByModifiedAtDesc(Member member);
+
+    Optional<RoomDetail> findByMember_MemberId(Long memberId);
 }
