@@ -5,11 +5,14 @@ import be.clone.kakao.domain.member.Member;
 import be.clone.kakao.domain.member.dto.*;
 import be.clone.kakao.jwt.userdetails.UserDetailsImpl;
 import be.clone.kakao.service.MemberService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -99,5 +102,13 @@ public class MemberController {
         return ResponseEntity.ok()
                 .headers(jwtTokenHeaders)
                 .build();
+    }
+
+    @GetMapping("/user/kakao/callback")
+    public ResponseEntity<?> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
+        LoginResponseDto loginResponseDto = memberService.kakaoLogin(code, response);
+        return ResponseEntity.ok()
+                .headers(loginResponseDto.getHeaders())
+                .body(loginResponseDto.getProfileResponseDto());
     }
 }

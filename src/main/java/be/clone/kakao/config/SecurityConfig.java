@@ -88,6 +88,10 @@ public class SecurityConfig {
                 .antMatchers("/ws/**").permitAll()
                 .antMatchers("/stomp/**").permitAll()
                 .antMatchers("/websocket/**").permitAll()
+                .antMatchers("/user/**").permitAll()
+                .antMatchers("/v2/**","/v2/api-docs", "/swagger-resources/**",
+                        "/swagger-ui.html/**","/swagger-ui/**").permitAll()
+                .antMatchers("/webjars/**").permitAll()
                 // 이외에는 모두 인증 필요
                 .anyRequest().authenticated();
 

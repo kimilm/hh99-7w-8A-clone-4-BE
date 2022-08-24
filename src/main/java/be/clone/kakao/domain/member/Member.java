@@ -33,12 +33,24 @@ public class Member extends Timestamped {
     @Column(nullable = false)
     private String introduce;
 
+    @Column(unique = true)
+    private Long kakaoId;
+
     private Member(String email, String password, String nickname, String profilePic) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
         this.profilePic = profilePic;
         this.introduce = "";
+        this.kakaoId = null;
+    }
+
+    public Member(String email, String password, String nickname, String profilePic, Long kakaoId){
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.profilePic = profilePic;
+        this.kakaoId = kakaoId;
     }
 
     public static Member of(SignupRequestDto requestDto, String encodedPassword, String profilePic) {
@@ -50,4 +62,6 @@ public class Member extends Timestamped {
         this.profilePic = requestDto.getProfilePic();
         this.introduce = requestDto.getIntroduce();
     }
+
+
 }
