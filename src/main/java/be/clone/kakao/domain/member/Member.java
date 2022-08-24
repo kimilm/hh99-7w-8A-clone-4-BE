@@ -50,6 +50,7 @@ public class Member extends Timestamped {
         this.password = password;
         this.nickname = nickname;
         this.profilePic = profilePic;
+        this.introduce = "";
         this.kakaoId = kakaoId;
     }
 

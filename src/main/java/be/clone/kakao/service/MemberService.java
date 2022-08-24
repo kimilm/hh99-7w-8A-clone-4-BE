@@ -207,7 +207,6 @@ public class MemberService {
                 .get("profile_image").asText();
         String email = jsonNode.get("kakao_account")
                 .get("email").asText();
-
         return new KakaoUserInfoDto(id,nickname,image,email);
     }
 }
