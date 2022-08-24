@@ -4,11 +4,15 @@ package be.clone.kakao.service;
 import be.clone.kakao.domain.Room.RoomDetail;
 import be.clone.kakao.domain.Room.RoomMaster;
 import be.clone.kakao.domain.Room.dto.RoomDetailRequestDto;
+import be.clone.kakao.domain.Room.dto.RoomInviteDto;
 import be.clone.kakao.domain.Room.dto.RoomMasterRequestDto;
 import be.clone.kakao.domain.Room.dto.RoomMasterResponseDto;
 import be.clone.kakao.domain.SimpleMessageDto;
 import be.clone.kakao.domain.friend.Friend;
 import be.clone.kakao.domain.member.Member;
+import be.clone.kakao.repository.FriendRepository;
+import be.clone.kakao.repository.MemberRepository;
+import be.clone.kakao.jwt.userdetails.UserDetailsImpl;
 import be.clone.kakao.repository.FriendRepository;
 import be.clone.kakao.repository.MemberRepository;
 import be.clone.kakao.repository.RoomDetailRepository;
@@ -27,6 +31,7 @@ public class RoomService {
     private final MemberRepository memberRepository;
     private final RoomDetailRepository roomDetailRepository;
     private final RoomMasterRepository roomMasterRepository;
+
 
     private final FriendRepository friendRepository;
 
@@ -84,6 +89,22 @@ public class RoomService {
         roomMaster.update(requestDto);
         return roomMaster;
     }
+
+    public void Invite(UserDetailsImpl userDetails, Long roomMasterId, RoomInviteDto requestDto) {
+        RoomMaster roomMaster = roomMasterRepository.findById(roomMasterId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다."));
+        Member me = userDetails.getMember();
+        for(Long id : requestDto.getFriends()){
+            if(friendRepository.existsByFromAndTo_MemberId(me,id)) {
+                Member member = memberRepository.findById(id)
+                        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+                RoomDetail roomDetail = roomDetailRepository.findByRoomMaster_IdAndMember_MemberId(roomMasterId, id)
+                        .orElse(new RoomDetail(roomMaster, member));
+                roomDetailRepository.save(roomDetail);
+            }
+        }
+    }
+
 
 
 //    @Transactional
