@@ -51,14 +51,14 @@ public class RoomController {
                 .body(roomMasterId);
     }
 
-//    @PostMapping("/api/rooms/{roomMasterId}")
-//    public ResponseEntity<?> updateRoom(@AuthenticationPrincipal UserDetailsImpl userDetails,
-//                                        @RequestBody RoomInviteDto requestDto,
-//                                        @PathVariable Long roomMasterId){
-//        roomService.Invite(userDetails,roomMasterId,requestDto);
-//        return ResponseEntity.ok()
-//                .body("초대 성공");
-//    }
+    @PostMapping("/api/rooms/{roomMasterId}")
+    public ResponseEntity<?> updateRoom(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                        @RequestBody RoomInviteDto requestDto,
+                                        @PathVariable Long roomMasterId){
+        roomService.Invite(userDetails,roomMasterId,requestDto);
+        return ResponseEntity.ok()
+                .body("초대 성공");
+    }
 
 //    @RequestMapping(value = "api/room/{roomMaserId}/mamber/{mamberId}", method = RequestMethod.POST)
 //    public ResponseEntity<?> postFriends(@AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -71,12 +71,13 @@ public class RoomController {
 //    }
 
 
-    @RequestMapping(value = "api/room/{roomMaserId}", method = RequestMethod.POST)
-    public ResponseEntity<?> inviteFriends(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable RoomMaster roomMasterId) {
-        Member member = userDetails.getMember();
-        List<RoomDetailRequestDto> roomDetailRequestDtoList = roomService.inviteFriends(member, roomMasterId);
-        return ResponseEntity.ok()
-                .body(roomDetailRequestDtoList);
-    }
+//    @RequestMapping(value = "api/room/{roomMaserId}", method = RequestMethod.POST)
+//    public ResponseEntity<?> inviteFriends(@AuthenticationPrincipal UserDetailsImpl userDetails,
+//                                           @PathVariable RoomMaster roomMasterId) {
+//        Member member = userDetails.getMember();
+//        List<RoomDetailRequestDto> roomDetailRequestDtoList = roomService.inviteFriends(member, roomMasterId);
+//        return ResponseEntity.ok()
+//                .body(roomDetailRequestDtoList);
+//    }
 
 }

@@ -119,16 +119,16 @@ public class RoomService {
 //        return roomMaster;
 //    }
 
-    @Transactional
-    public List<RoomDetailRequestDto> inviteFriends(Member member, RoomMaster roomMasterId) {
-        List<Friend> allByOrderByModifiedAtDesc = friendRepository.findByFrom(member);
-        List<RoomDetailRequestDto> dtoList = new ArrayList<>();
-        for (Friend friend : allByOrderByModifiedAtDesc) {
-            Long friends = friend.getId();
-            RoomDetailRequestDto requestDto = new RoomDetailRequestDto(friends);
-            dtoList.add(requestDto);
-        }
-        return dtoList;
-    }
+//    @Transactional
+//    public List<RoomDetailRequestDto> inviteFriends(Member member, Long roomMasterId) {
+//        List<Friend> allByOrderByModifiedAtDesc = friendRepository.findByFrom(member);
+//        List<RoomDetailRequestDto> dtoList = new ArrayList<>();
+//        for (Friend friend : allByOrderByModifiedAtDesc) {
+//            Long friends = friend.getId();
+//            RoomDetailRequestDto requestDto = new RoomDetailRequestDto(friends);
+//            dtoList.add(requestDto);
+//        }
+//        return dtoList;
+//    }
 }
 
