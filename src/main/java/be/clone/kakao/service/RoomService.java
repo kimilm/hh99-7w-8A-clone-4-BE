@@ -71,7 +71,7 @@ public class RoomService {
                 unReadCount = chatRepository.countFromLastReadChat(roomMasterId, roomDetail.getChatId());
             }
 
-            RoomMasterResponseDto responseDto = new RoomMasterResponseDto(roomMasterId, roomName, recentChat, people);
+            RoomMasterResponseDto responseDto = new RoomMasterResponseDto(roomMasterId, roomName, recentChat, unReadCount, people);
             dtoList.add(responseDto);
         }
         return dtoList;
