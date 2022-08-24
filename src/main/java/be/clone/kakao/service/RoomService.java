@@ -3,9 +3,13 @@ package be.clone.kakao.service;
 
 import be.clone.kakao.domain.Room.RoomDetail;
 import be.clone.kakao.domain.Room.RoomMaster;
+import be.clone.kakao.domain.Room.dto.RoomDetailRequestDto;
 import be.clone.kakao.domain.Room.dto.RoomMasterRequestDto;
 import be.clone.kakao.domain.Room.dto.RoomMasterResponseDto;
+import be.clone.kakao.domain.SimpleMessageDto;
+import be.clone.kakao.domain.friend.Friend;
 import be.clone.kakao.domain.member.Member;
+import be.clone.kakao.repository.FriendRepository;
 import be.clone.kakao.repository.MemberRepository;
 import be.clone.kakao.repository.RoomDetailRepository;
 import be.clone.kakao.repository.RoomMasterRepository;
@@ -23,6 +27,8 @@ public class RoomService {
     private final MemberRepository memberRepository;
     private final RoomDetailRepository roomDetailRepository;
     private final RoomMasterRepository roomMasterRepository;
+
+    private final FriendRepository friendRepository;
 
     @Transactional
     public Long createRoom(Member member, RoomMasterRequestDto requestDto) {
@@ -78,7 +84,30 @@ public class RoomService {
         roomMaster.update(requestDto);
         return roomMaster;
     }
-}
+
 
 //    @Transactional
-//    public
+//    public RoomMaster deleteRoom(Member member, Long roomMasterId) {
+//        RoomMaster roomMaster = roomMasterRepository.findById(roomMasterId)
+//                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다."));
+//        if (roomDetailRepository.existsByMemberAndRoomMaster(member, roomMaster)) {
+//            throw new IllegalArgumentException("작성자만 지울 수 있습니다.");
+//        }
+//        roomMasterRepository.deleteByRoomMaster(roomMasterId);
+//        roomMasterRepository.delete(roomMaster);
+//        return roomMaster;
+//    }
+
+    @Transactional
+    public List<RoomDetailRequestDto> inviteFriends(Member member, RoomMaster roomMasterId) {
+        List<Friend> allByOrderByModifiedAtDesc = friendRepository.findByFrom(member);
+        List<RoomDetailRequestDto> dtoList = new ArrayList<>();
+        for (Friend friend : allByOrderByModifiedAtDesc) {
+            Long friends = friend.getId();
+            RoomDetailRequestDto requestDto = new RoomDetailRequestDto(friends);
+            dtoList.add(requestDto);
+        }
+        return dtoList;
+    }
+}
+
