@@ -50,6 +50,8 @@ public class StompChatController {
         // 채팅방
         // for
 
+        // memberId한테도 리턴할 것
+
         for (Long friendId : friends) {
             log.info(friendId + " 로그");
             template.convertAndSend("/sub/room/invite/" + friendId, new SimpleFriendResponseDto(friendId) + "번 회원 초대 왼료");

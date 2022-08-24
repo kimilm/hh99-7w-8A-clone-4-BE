@@ -29,7 +29,10 @@ public class JwtFilter extends OncePerRequestFilter {
         String accessToken = resolveAccessToken(request);
         // 적합한 리프레시 토큰이라면 reissue 수행
         if (refreshToken != null && tokenProvider.validateToken(refreshToken)) {
-
+            // 리프레시 토큰으로부터 authentication 객체 얻어오기
+            Authentication authentication = tokenProvider.getAuthenticationByRefreshToken(refreshToken);
+            // 받아온 Authentication 객체 시큐리티 컨텍스트 홀더에 저장
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         // 적합한 엑세스 토큰이라면 authentication 에 추가
         else if (StringUtils.hasText(accessToken) && tokenProvider.validateToken(accessToken)) {

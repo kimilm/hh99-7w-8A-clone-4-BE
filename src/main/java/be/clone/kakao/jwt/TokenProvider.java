@@ -85,6 +85,18 @@ public class TokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, "", null);
     }
 
+    public Authentication getAuthenticationByRefreshToken(String refreshToken) {
+        // 서버에 해당 리프레시 토큰이 존재하는지 확인
+        RefreshToken refreshTokenObj = refreshTokenRepository.findByTokenValue(refreshToken)
+                .orElseThrow(() -> new IllegalArgumentException("서버에 존재하지 않는 리프레시 토큰입니다."));
+        // Member 객체 가져오기
+        Member member = memberRepository.findById(refreshTokenObj.getMember().getMemberId()).orElseThrow();
+        // UserDetails 로 변환
+        UserDetailsImpl principal = new UserDetailsImpl(member);
+        // Authentication 객체 생성
+        return new UsernamePasswordAuthenticationToken(principal, "", null);
+    }
+
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
