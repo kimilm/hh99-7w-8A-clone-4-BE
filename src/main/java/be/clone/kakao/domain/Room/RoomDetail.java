@@ -1,14 +1,13 @@
 package be.clone.kakao.domain.Room;
 
 import be.clone.kakao.domain.Timestamped;
-import be.clone.kakao.domain.friend.Friend;
 import be.clone.kakao.domain.member.Member;
-import lombok.*;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Entity
@@ -28,7 +27,14 @@ public class RoomDetail extends Timestamped {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    public RoomDetail(RoomMaster roomMaster, Member member){
+    @Column
+    private Long chatId;
+
+    public void updateChatId(Long chatId) {
+        this.chatId = chatId;
+    }
+
+    public RoomDetail(RoomMaster roomMaster, Member member) {
         this.roomMaster = roomMaster;
         this.member = member;
     }

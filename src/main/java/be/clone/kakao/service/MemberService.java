@@ -49,6 +49,14 @@ public class MemberService {
         if (!passwordEncoder.matches(requestDto.getPassword(), member.getPassword())) {
             throw new IllegalArgumentException("비밀번호를 잘못 입력하셨습니다.");
         }
+
+        HttpHeaders jwtTokenHeaders = getJwtTokenHeaders(member);
+
+        return new LoginResponseDto(jwtTokenHeaders, ProfileResponseDto.of(member));
+    }
+
+    // 토큰 헤더 생성
+    public HttpHeaders getJwtTokenHeaders(Member member) {
         // 토큰 생성
         JwtTokenDto jwtTokenDto = tokenProvider.generateTokenDto(member);
         // 헤더에 담기
@@ -56,7 +64,7 @@ public class MemberService {
         headers.add(AUTHORIZATION_HEADER, jwtTokenDto.getAccessToken());
         headers.add(REFRESH_TOKEN_HEADER, jwtTokenDto.getRefreshToken());
 
-        return new LoginResponseDto(headers, ProfileResponseDto.of(member));
+        return headers;
     }
 
     // 아이디로 프로필 조회

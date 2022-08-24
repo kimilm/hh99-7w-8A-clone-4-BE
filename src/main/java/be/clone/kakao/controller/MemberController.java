@@ -6,6 +6,7 @@ import be.clone.kakao.domain.member.dto.*;
 import be.clone.kakao.jwt.userdetails.UserDetailsImpl;
 import be.clone.kakao.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -86,5 +87,17 @@ public class MemberController {
 
         return ResponseEntity.ok()
                 .body(new SimpleMessageDto("로그아웃 성공: memberId = " + memberId));
+    }
+
+    @GetMapping("/api/reissue")
+    public ResponseEntity<?> reissue(
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        Member member = userDetails.getMember();
+        HttpHeaders jwtTokenHeaders = memberService.getJwtTokenHeaders(member);
+
+        return ResponseEntity.ok()
+                .headers(jwtTokenHeaders)
+                .build();
     }
 }
