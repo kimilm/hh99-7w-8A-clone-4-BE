@@ -28,9 +28,9 @@ public class RoomController {
     public ResponseEntity<?> createRoom(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                         @RequestBody RoomMasterRequestDto requestDto) {
         Member member = userDetails.getMember();
-        Long roomMasterId = roomService.createRoom(member, requestDto);
+        RoomMasterResponseDto roomMasterResponseDto = roomService.createRoom(member, requestDto);
         return ResponseEntity.ok()
-                .body(roomMasterId);
+                .body(roomMasterResponseDto);
     }
 
 
@@ -55,7 +55,8 @@ public class RoomController {
     public ResponseEntity<?> updateRoom(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                         @RequestBody RoomInviteDto requestDto,
                                         @PathVariable Long roomMasterId){
-        roomService.Invite(userDetails,roomMasterId,requestDto);
+        Member member = userDetails.getMember();
+        roomService.Invite(member,roomMasterId,requestDto);
         return ResponseEntity.ok()
                 .body("초대 성공");
     }

@@ -8,7 +8,6 @@ import be.clone.kakao.domain.Room.dto.RoomMasterRequestDto;
 import be.clone.kakao.domain.Room.dto.RoomMasterResponseDto;
 import be.clone.kakao.domain.chat.Chat;
 import be.clone.kakao.domain.member.Member;
-import be.clone.kakao.jwt.userdetails.UserDetailsImpl;
 import be.clone.kakao.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,8 +28,15 @@ public class RoomService {
 
     private final FriendRepository friendRepository;
 
+    public RoomMasterResponseDto createRoom(Long memberId, String roomName) {
+        Member member = memberRepository.findById(memberId).orElseThrow();
+        RoomMasterRequestDto requestDto = new RoomMasterRequestDto(roomName);
+
+        return createRoom(member, requestDto);
+    }
+
     @Transactional
-    public Long createRoom(Member member, RoomMasterRequestDto requestDto) {
+    public RoomMasterResponseDto createRoom(Member member, RoomMasterRequestDto requestDto) {
         RoomMaster roomMaster = RoomMaster.builder()
                 .roomName(requestDto.getRoomName())
                 .roomDetails(new ArrayList<>())
@@ -45,7 +51,9 @@ public class RoomService {
 
         roomMasterRepository.save(roomMaster);
 
-        return roomMaster.getId();
+        RoomMasterResponseDto responseDto = new RoomMasterResponseDto(roomMaster.getId(), roomMaster.getRoomName(), null, 0L, 0L);
+
+        return responseDto;
     }
 
     @Transactional(readOnly = true)
@@ -100,10 +108,17 @@ public class RoomService {
         detail.updateChatId(chat.getChatId());
     }
 
-    public void Invite(UserDetailsImpl userDetails, Long roomMasterId, RoomInviteDto requestDto) {
+    public void Invite(Long memberId, Long roomId, RoomInviteDto requestDto) {
+
+        Member member = memberRepository.findById(memberId).orElseThrow();
+
+        Invite(member, roomId, requestDto);
+    }
+
+    public void Invite(Member me, Long roomMasterId, RoomInviteDto requestDto) {
         RoomMaster roomMaster = roomMasterRepository.findById(roomMasterId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다."));
-        Member me = userDetails.getMember();
+
         for (Long id : requestDto.getFriends()) {
             if (friendRepository.existsByFromAndTo_MemberId(me, id)) {
                 Member member = memberRepository.findById(id)
