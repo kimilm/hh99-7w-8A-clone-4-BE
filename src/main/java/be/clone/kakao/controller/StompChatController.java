@@ -1,12 +1,10 @@
 package be.clone.kakao.controller;
 
+import be.clone.kakao.domain.Room.dto.RoomInviteDto;
 import be.clone.kakao.domain.Room.dto.RoomMasterResponseDto;
 import be.clone.kakao.domain.chat.dto.ChatDto;
 import be.clone.kakao.service.ChatService;
 import be.clone.kakao.service.RoomService;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -46,29 +44,23 @@ public class StompChatController {
 
     // append
     @MessageMapping(value = "/room/invite/{memberId}")
-    public void inviteRoom(@DestinationVariable String memberId, List<Long> friends) {
-        // 채팅방
-        // for
+    public void inviteRoom(@DestinationVariable String memberId, RoomInviteDto invite) {
 
+        // 맴버가 채팅방 개설
+        long parsedmemberId = Long.parseLong(memberId);
+        RoomMasterResponseDto responseDto = roomService.createRoom(parsedmemberId, invite.getRoomName());
+        // 회원 수 설정
+        responseDto.setPeople(invite.getFriends().size() + 1L);
         // memberId한테도 리턴할 것
+        log.info("채팅방 개설 완료");
+        template.convertAndSend("/sub/room/invite/" + memberId, responseDto);
 
-        for (Long friendId : friends) {
-            log.info(friendId + " 로그");
-            template.convertAndSend("/sub/room/invite/" + friendId, new SimpleFriendResponseDto(friendId) + "번 회원 초대 왼료");
+        // 친구들 초대하기
+        roomService.Invite(parsedmemberId, responseDto.getRoomMasterId(), invite);
+
+        for (Long friendId : invite.getFriends()) {
+            log.info(friendId + "번 회원 초대 발송");
+            template.convertAndSend("/sub/room/invite/" + friendId, responseDto);
         }
-    }
-
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    private static class SimpleFriendRequestDto {
-        private List<Long> friendId;
-    }
-
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    private static class SimpleFriendResponseDto {
-        private Long friendId;
     }
 }
