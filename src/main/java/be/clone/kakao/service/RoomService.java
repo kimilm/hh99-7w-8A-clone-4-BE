@@ -30,8 +30,6 @@ public class RoomService {
 
     private final FriendRepository friendRepository;
 
-    private final SimpleMessageDto simpleMessageDto;
-
     @Transactional
     public Long createRoom(Member member, RoomMasterRequestDto requestDto) {
         RoomMaster roomMaster = RoomMaster.builder()
@@ -88,17 +86,17 @@ public class RoomService {
     }
 
 
-    @Transactional
-    public RoomMaster deleteRoom(Member member, Long roomMasterId) {
-        RoomMaster roomMaster = roomMasterRepository.findById(roomMasterId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다."));
-        if (roomDetailRepository.existsByMemberAndRoomMaster(member, roomMaster)) {
-            throw new IllegalArgumentException("작성자만 지울 수 있습니다.");
-        }
-        roomMasterRepository.deleteByRoomMaster(roomMasterId);
-        roomMasterRepository.delete(roomMaster);
-        return roomMaster;
-    }
+//    @Transactional
+//    public RoomMaster deleteRoom(Member member, Long roomMasterId) {
+//        RoomMaster roomMaster = roomMasterRepository.findById(roomMasterId)
+//                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 방입니다."));
+//        if (roomDetailRepository.existsByMemberAndRoomMaster(member, roomMaster)) {
+//            throw new IllegalArgumentException("작성자만 지울 수 있습니다.");
+//        }
+//        roomMasterRepository.deleteByRoomMaster(roomMasterId);
+//        roomMasterRepository.delete(roomMaster);
+//        return roomMaster;
+//    }
 
     @Transactional
     public List<RoomDetailRequestDto> inviteFriends(Member member) {
