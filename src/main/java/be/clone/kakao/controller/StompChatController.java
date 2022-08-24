@@ -4,6 +4,9 @@ import be.clone.kakao.domain.Room.dto.RoomMasterResponseDto;
 import be.clone.kakao.domain.chat.dto.ChatDto;
 import be.clone.kakao.service.ChatService;
 import be.clone.kakao.service.RoomService;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -39,5 +42,31 @@ public class StompChatController {
         List<RoomMasterResponseDto> rooms = roomService.getRoom(memberId);
         log.info("room list");
         template.convertAndSend("/sub/room/" + memberId, rooms);
+    }
+
+    // append
+    @MessageMapping(value = "/room/invite/{memberId}")
+    public void inviteRoom(@DestinationVariable String memberId, List<Long> friends) {
+        // 채팅방
+        // for
+
+        for (Long friendId : friends) {
+            log.info(friendId + " 로그");
+            template.convertAndSend("/sub/room/invite/" + friendId, new SimpleFriendResponseDto(friendId) + "번 회원 초대 왼료");
+        }
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    private static class SimpleFriendRequestDto {
+        private List<Long> friendId;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    private static class SimpleFriendResponseDto {
+        private Long friendId;
     }
 }
