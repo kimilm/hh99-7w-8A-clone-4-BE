@@ -125,7 +125,7 @@ public class MemberService {
         return member.getMemberId();
     }
 
-    public LoginResponseDto kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
+    public LoginResponseDto kakaoLogin(String code) throws JsonProcessingException {
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getKakaoAccessToken(code);
         // 2. 토큰으로 카카오 API 호출
