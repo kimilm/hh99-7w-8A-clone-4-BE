@@ -137,6 +137,8 @@ public class MemberService {
                 .orElse(null);
         if (kakaoUser == null) {
             // 회원가입
+            if(memberRepository.existsByEmail(kakaoUserInfo.getEmail()))
+                throw new IllegalArgumentException("이미 가입된 이메일입니다.");
             Member member = new Member(
                     kakaoUserInfo.getEmail(),
                     passwordEncoder.encode(UUID.randomUUID().toString()),
