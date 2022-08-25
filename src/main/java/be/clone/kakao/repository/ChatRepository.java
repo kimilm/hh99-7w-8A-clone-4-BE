@@ -21,6 +21,8 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
     @Query(value = COUNT_QUERY_STRING, nativeQuery = true)
     Long countFromLastReadChat(@Param(value = "roomMasterId") Long roomMasterId, @Param(value = "chatId") Long chatId);
 
+    Long countByRoomDetail_RoomMaster_IdAndRoomDetail_Member_MemberIdAndChatIdAfter(Long roomMasterId, Long memberId, Long chatId);
+
     List<Chat> findByRoomDetail_RoomMaster_IdOrderByCreatedAtAsc(Long masterId);
 
     Optional<Chat> findFirstByRoomDetail_RoomMaster_IdOrderByCreatedAtDesc(Long roomMasterId);
