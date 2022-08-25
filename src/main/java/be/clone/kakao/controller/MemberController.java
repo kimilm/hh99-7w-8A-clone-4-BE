@@ -7,13 +7,13 @@ import be.clone.kakao.jwt.userdetails.UserDetailsImpl;
 import be.clone.kakao.service.MemberService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class MemberController {
@@ -98,6 +98,8 @@ public class MemberController {
     ) {
         Member member = userDetails.getMember();
         HttpHeaders jwtTokenHeaders = memberService.getJwtTokenHeaders(member);
+
+        log.info("reissue done");
 
         return ResponseEntity.ok()
                 .headers(jwtTokenHeaders)
