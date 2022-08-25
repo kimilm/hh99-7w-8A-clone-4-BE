@@ -105,8 +105,8 @@ public class MemberController {
     }
 
     @GetMapping("/user/kakao/callback")
-    public ResponseEntity<?> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
-        LoginResponseDto loginResponseDto = memberService.kakaoLogin(code, response);
+    public ResponseEntity<?> kakaoLogin(@RequestParam String code) throws JsonProcessingException {
+        LoginResponseDto loginResponseDto = memberService.kakaoLogin(code);
         return ResponseEntity.ok()
                 .headers(loginResponseDto.getHeaders())
                 .body(loginResponseDto.getProfileResponseDto());

@@ -22,6 +22,7 @@ public class StompHandler extends ChannelInterceptorAdapter {
 
     @Override
     public void postSend(Message message, MessageChannel channel, boolean sent) {
+        //여기에 헤더 내에 토큰값을 찾아 검증하는 과정을 추가하였으나 이 메소드까지 요청이 도달하지 못함
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         List<String> disconnectedMemberId = accessor.getNativeHeader("memberId");
         List<String> disconnectedRoomId = accessor.getNativeHeader("roomId");
