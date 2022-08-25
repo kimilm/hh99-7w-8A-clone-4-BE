@@ -23,7 +23,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
 import static be.clone.kakao.jwt.JwtFilter.AUTHORIZATION_HEADER;
@@ -53,8 +52,10 @@ public class MemberService {
         String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
         // 기본 이미지
         String defaultProfilePic = KakaoUtils.getRandomMemberPic();
+        // 기본 소개
+        String defaultIntroduce = KakaoUtils.getRandomIntroduce();
         // 맴버 객체 생성
-        Member member = Member.of(requestDto, encodedPassword, defaultProfilePic);
+        Member member = Member.of(requestDto, encodedPassword, defaultProfilePic, defaultIntroduce);
         // 저장 후 아이디 리턴
         return memberRepository.save(member).getMemberId();
     }
@@ -137,7 +138,7 @@ public class MemberService {
                 .orElse(null);
         if (kakaoUser == null) {
             // 회원가입
-            if(memberRepository.existsByEmail(kakaoUserInfo.getEmail()))
+            if (memberRepository.existsByEmail(kakaoUserInfo.getEmail()))
                 throw new IllegalArgumentException("이미 가입된 이메일입니다.");
             Member member = new Member(
                     kakaoUserInfo.getEmail(),
