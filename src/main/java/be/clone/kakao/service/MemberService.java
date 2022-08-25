@@ -65,7 +65,7 @@ public class MemberService {
         Member member = memberRepository.findByEmail(requestDto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 이메일입니다."));
 
-        if (member.getKakaoId() == null) throw new IllegalArgumentException("카카오로 가입된 유저입니다.");
+        if (member.getKakaoId() != null) throw new IllegalArgumentException("카카오로 가입된 유저입니다.");
         // 비밀번호 검증
         if (!passwordEncoder.matches(requestDto.getPassword(), member.getPassword())) {
             throw new IllegalArgumentException("비밀번호를 잘못 입력하셨습니다.");
